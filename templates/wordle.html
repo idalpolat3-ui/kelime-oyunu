@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<title>Wordle</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+body{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;align-items:center;}
+.card{border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.cell{width:55px;height:55px;border:3px solid #ddd;display:inline-flex;align-items:center;justify-content:center;font-size:24px;font-weight:bold;text-transform:uppercase;border-radius:8px;margin:2px;}
+.green{background:#6aaa64;color:white;border-color:#6aaa64;}
+.yellow{background:#c9b458;color:white;border-color:#c9b458;}
+.gray{background:#787c7e;color:white;border-color:#787c7e;}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="row justify-content-center">
+<div class="col-md-6">
+<div class="card p-4 text-center">
+<h2 class="fw-bold mb-2">Wordle</h2>
+<p class="text-muted">Kelimeyi tahmin et! <span class="badge bg-primary">{{ target|length }} harfli</span></p>
+<div id="message" class="fw-bold fs-5 mb-2"></div>
+<div id="grid" class="mb-3"></div>
+<div class="d-flex gap-2 justify-content-center mt-3">
+<input type="text" id="guess" class="form-control" style="max-width:200px;" maxlength="20" placeholder="Tahmin et...">
+<button id="sendBtn" class="btn btn-success fw-bold">Gonder</button>
+</div>
+<hr>
+<a href="/" class="btn btn-outline-primary">Ana Sayfaya Don</a>
+</div>
+</div>
+</div>
+</div>
+<script>
+var target="{{ target }}";
+var attempts=0;
+var maxAttempts=6;
+var gameOver=false;
+
+function submitGuess(){
+if(gameOver)return;
+var guess=document.getElementById('guess').value.toUpperCase();
+if(guess.length!==target.length){
+document.getElementById('message').textContent=target.length+' harfli kelime girin!';
+return;
+}
+var xhr=new XMLHttpRequest();
+xhr.open('POST','/wordle/check',true);
+xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+xhr.onreadystatechange=function(){
+if(xhr.readyState===4&&xhr.status===200){
+var data=JSON.parse(xhr.responseText);
+var grid=document.getElementById('grid');
+var row=document.createElement('div');
+for(var i=0;i<guess.length;i++){
+var cell=document.createElement('div');
+cell.className='cell '+data.result[i];
+cell.textContent=guess[i];
+row.appendChild(cell);
+}
+grid.appendChild(row);
+attempts++;
+if(data.correct){document.getElementById('message').textContent='Tebrikler! Dogru!';gameOver=true;}
+else if(attempts>=maxAttempts){document.getElementById('message').textContent='Kelime: '+target;gameOver=true;}
+document.getElementById('guess').value='';
+}
+};
+xhr.send('guess='+encodeURIComponent(guess)+'&target='+encodeURIComponent(target));
+}
+
+document.getElementById('sendBtn').addEventListener('click',submitGuess);
+document.getElementById('guess').addEventListener('keypress',function(e){if(e.key==='Enter')submitGuess();});
+</script>
+</body>
+</html>
