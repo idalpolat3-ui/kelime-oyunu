@@ -159,3 +159,18 @@ def wordchain():
             story = f"Hata: API kotasi doldu veya baglanti sorunu. Lutfen daha sonra tekrar deneyin."
             words_used = request.form['words']
     return render_template('wordchain.html', story=story, words_used=words_used)
+
+
+@app.route('/forgot', methods=['GET', 'POST'])
+def forgot():
+    if request.method == 'POST':
+        username = request.form['username']
+        new_password = request.form['new_password']
+        user = User.query.filter_by(username=username).first()
+        if user:
+            user.password = generate_password_hash(new_password)
+            db.session.commit()
+            flash('Sifre basariyla guncellendi!')
+            return redirect(url_for('login'))
+        flash('Kullanici bulunamadi!')
+    return render_template('forgot.html')
