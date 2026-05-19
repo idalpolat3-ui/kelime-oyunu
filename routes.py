@@ -1,13 +1,13 @@
 from flask import render_template, redirect, url_for, request, flash, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from app import app, db
-from models import User, Word
+from models import User, Word, WordSample
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from google import genai
 import random
 
-client = genai.Client(api_key='AIzaSyAoRFMoV9i8uzhac5cw_cRMQZbKjeRhdvw')
+client = genai.Client(api_key='AIzaSyDZ9lfOUIqBz37BqngQPRO9CjI6-bj4M4s')
 
 def get_next_review(correct_count):
     intervals = [1, 7, 30, 90, 180, 365]
@@ -30,7 +30,7 @@ def register():
         user = User(username=username, password=password)
         db.session.add(user)
         db.session.commit()
-        flash('Kayit basarili! Giris yapabilirsiniz.')
+        flash('Kayit basarili!')
         return redirect(url_for('login'))
     return render_template('register.html')
 
@@ -58,8 +58,13 @@ def add_word():
     english = request.form['english']
     turkish = request.form['turkish']
     picture = request.form.get('picture', '')
+    sample = request.form.get('sample', '')
     word = Word(english=english, turkish=turkish, picture=picture, user_id=current_user.id)
     db.session.add(word)
+    db.session.flush()
+    if sample:
+        word_sample = WordSample(word_id=word.id, sample=sample)
+        db.session.add(word_sample)
     db.session.commit()
     return redirect(url_for('index'))
 
@@ -144,9 +149,13 @@ def wordchain():
     story = None
     words_used = None
     if request.method == 'POST':
-        words = request.form['words']
-        prompt = f"Bu kelimeleri kullanarak kisa bir Ingilizce hikaye yaz ve Turkceye cevir: {words}"
-        response = client.models.generate_content(model='gemini-2.0-flash-lite', contents=prompt)
-        story = response.text
-        words_used = words
+        try:
+            words = request.form['words']
+            prompt = f"Bu kelimeleri kullanarak kisa bir Ingilizce hikaye yaz ve Turkceye cevir: {words}"
+            response = client.models.generate_content(model='gemini-2.0-flash-lite', contents=prompt)
+            story = response.text
+            words_used = words
+        except Exception as e:
+            story = f"Hata: API kotasi doldu veya baglanti sorunu. Lutfen daha sonra tekrar deneyin."
+            words_used = request.form['words']
     return render_template('wordchain.html', story=story, words_used=words_used)

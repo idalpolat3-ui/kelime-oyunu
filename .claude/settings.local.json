@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"c:/Users/asus/Desktop/deneme projeleri/ders_pdf/templates\")",
+      "Bash(mkdir -p \"c:/Users/asus/Desktop/deneme projeleri/ders_pdf/static\")",
+      "Bash(pip install *)",
+      "Bash(python app.py)",
+      "Bash(curl -s http://localhost:5000)",
+      "Bash(pkill -f \"python app.py\")",
+      "Bash(python app.py --port 5001)",
+      "Bash(python -c ' *)",
+      "Bash(curl -s http://localhost:5001)",
+      "Bash(pkill -f \"python\")",
+      "Bash(curl -s http://127.0.0.1:5000)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill /PID 1804 /F)",
+      "Bash(taskkill /PID 17972 /F)",
+      "Bash(taskkill /PID 13880 /F)",
+      "Bash(taskkill /PID 4608 /F)",
+      "Bash(taskkill /PID 5012 /F)",
+      "Bash(cmd.exe /c \"taskkill /PID 1804 /F & taskkill /PID 17972 /F & taskkill /PID 13880 /F & taskkill /PID 4608 /F & taskkill /PID 5012 /F\")",
+      "Bash(cmd.exe /c \"FOR /F \\\\\"tokens=5\\\\\" %a IN \\('netstat -ano ^| findstr :5000 ^| findstr LISTENING'\\) DO taskkill /PID %a /F\")",
+      "PowerShell($pids = \\(netstat -ano | Select-String \":5000\" | Select-String \"LISTENING\" | ForEach-Object { \\($_ -split '\\\\s+'\\)[-1] } | Sort-Object -Unique\\); foreach \\($p in $pids\\) { Stop-Process -Id $p -Force -ErrorAction SilentlyContinue }; Write-Host \"Kapatıldı: $pids\")",
+      "PowerShell($pids = \\(netstat -ano | Select-String \":5000\" | Select-String \"LISTENING\" | ForEach-Object { \\($_ -split '\\\\s+'\\)[-1] } | Sort-Object -Unique\\); foreach \\($p in $pids\\) { $proc = Get-Process -Id $p -ErrorAction SilentlyContinue; Write-Host \"PID: $p - $\\($proc.Name\\) - $\\($proc.Path\\)\" })",
+      "PowerShell($pids = @\\(13880, 17972, 1804, 4608, 5012\\); foreach \\($p in $pids\\) { $wmi = Get-WmiObject Win32_Process -Filter \"ProcessId=$p\" -ErrorAction SilentlyContinue; Write-Host \"PID: $p - Name: $\\($wmi.Name\\) - Path: $\\($wmi.ExecutablePath\\)\" })",
+      "PowerShell(Get-NetTCPConnection -LocalPort 5000 -State Listen | Select-Object LocalAddress, LocalPort, OwningProcess | ForEach-Object { $p = Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue; [PSCustomObject]@{PID=$_.OwningProcess; Name=$p.Name; Path=$p.MainModule.FileName} })",
+      "PowerShell(Get-NetTCPConnection -LocalPort 5000 | ForEach-Object { $proc = Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue; Write-Host \"$\\($_.State\\) | PID: $\\($_.OwningProcess\\) | $\\($proc.Name\\)\" })",
+      "PowerShell(Get-Process -Id 13880 -IncludeUserName -ErrorAction SilentlyContinue | Select-Object Id, Name, UserName, CPU; \\(Get-WmiObject Win32_Process -Filter \"ProcessId=13880\"\\).CommandLine)",
+      "PowerShell(\\(Get-WmiObject Win32_Process -Filter \"ProcessId=13880\"\\).CommandLine)",
+      "Bash(curl -si http://127.0.0.1:5000)",
+      "PowerShell($conn = Get-NetTCPConnection -LocalPort 5000 -State Listen -ErrorAction SilentlyContinue; if \\($conn\\) { Stop-Process -Id $conn.OwningProcess -Force -ErrorAction SilentlyContinue; Write-Host \"PID $\\($conn.OwningProcess\\) durduruldu\" })",
+      "PowerShell(Get-Process python -ErrorAction SilentlyContinue | Stop-Process -Force; Start-Sleep 2; $remaining = Get-NetTCPConnection -LocalPort 5000 -State Listen -ErrorAction SilentlyContinue; Write-Host \"Kalan PID'ler: $\\($remaining.OwningProcess -join ', '\\)\")",
+      "PowerShell(Stop-Process -Force)"
+    ]
+  }
+}

@@ -8,7 +8,6 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
-
     daily_word_count = db.Column(db.Integer, default=10)
 
 class Word(db.Model):
@@ -20,3 +19,8 @@ class Word(db.Model):
     correct_count = db.Column(db.Integer, default=0)
     next_review = db.Column(db.DateTime, default=datetime.utcnow)
     is_learned = db.Column(db.Boolean, default=False)
+
+class WordSample(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    word_id = db.Column(db.Integer, db.ForeignKey('word.id'), nullable=False)
+    sample = db.Column(db.String(500), nullable=False)

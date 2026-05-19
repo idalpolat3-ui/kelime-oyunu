@@ -23,3 +23,20 @@
                     <form method="POST">
                         <div class="mb-3">
                             <textarea name="words" class="form-control" rows="3" placeholder="Örnek: brain, night, tiger, robin, noble">{% if words_used %}{{ words_used }}{% endif %}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-lg w-100 fw-bold" style="background:#9C27B0;color:white;">🤖 Hikaye Oluştur</button>
+                    </form>
+                    {% if story %}
+                    <div class="story-box mt-4">
+                        <h5 class="fw-bold">📖 Oluşturulan Hikaye:</h5>
+                        <p>{{ story }}</p>
+                    </div>
+                    {% endif %}
+                    <hr>
+                    <a href="/" class="btn btn-outline-primary w-100 mt-2">Ana Sayfaya Dön</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
