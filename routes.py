@@ -174,3 +174,15 @@ def forgot():
             return redirect(url_for('login'))
         flash('Kullanici bulunamadi!')
     return render_template('forgot.html')
+
+
+
+@app.route('/delete_word/<int:word_id>')
+@login_required
+def delete_word(word_id):
+    word = Word.query.get(word_id)
+    if word and word.user_id == current_user.id:
+        WordSample.query.filter_by(word_id=word_id).delete()
+        db.session.delete(word)
+        db.session.commit()
+    return redirect(url_for('index'))

@@ -19,6 +19,7 @@ class Word(db.Model):
     correct_count = db.Column(db.Integer, default=0)
     next_review = db.Column(db.DateTime, default=datetime.utcnow)
     is_learned = db.Column(db.Boolean, default=False)
+    samples = db.relationship('WordSample', backref='word', lazy=True)
 
 class WordSample(db.Model):
     id = db.Column(db.Integer, primary_key=True)
