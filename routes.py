@@ -186,3 +186,25 @@ def delete_word(word_id):
         db.session.delete(word)
         db.session.commit()
     return redirect(url_for('index'))
+
+@app.route('/edit_word/<int:word_id>', methods=['GET', 'POST'])
+@login_required
+def edit_word(word_id):
+    word = Word.query.get(word_id)
+    if not word or word.user_id != current_user.id:
+        return redirect(url_for('index'))
+    if request.method == 'POST':
+        word.english = request.form['english']
+        word.turkish = request.form['turkish']
+        word.picture = request.form.get('picture', '')
+        sample_text = request.form.get('sample', '')
+        existing_sample = WordSample.query.filter_by(word_id=word_id).first()
+        if sample_text:
+            if existing_sample:
+                existing_sample.sample = sample_text
+            else:
+                db.session.add(WordSample(word_id=word_id, sample=sample_text))
+        db.session.commit()
+        return redirect(url_for('index'))
+    existing_sample = WordSample.query.filter_by(word_id=word_id).first()
+    return render_template('edit_word.html', word=word, sample=existing_sample)
