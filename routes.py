@@ -155,7 +155,7 @@ def wordchain():
         try:
             words = request.form['words']
             prompt = f"Bu kelimeleri kullanarak kisa bir Ingilizce hikaye yaz ve Turkceye cevir: {words}"
-            response = client.models.generate_content(model='gemini-2.0-flash-lite', contents=prompt)
+            response = client.models.generate_content(model='gemini-1.5-flash', contents=prompt)
             story = response.text
             words_used = words
         except Exception as e:
