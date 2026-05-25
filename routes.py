@@ -7,7 +7,10 @@ from datetime import datetime, timedelta
 from google import genai
 import random
 
-client = genai.Client(api_key='AIzaSyDZ9lfOUIqBz37BqngQPRO9CjI6-bj4M4s')
+import os
+from dotenv import load_dotenv
+load_dotenv()
+client = genai.Client(api_key=os.getenv('GEMINI_API_KEY'))
 
 def get_next_review(correct_count):
     intervals = [1, 7, 30, 90, 180, 365]
